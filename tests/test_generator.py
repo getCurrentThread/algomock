@@ -1,38 +1,38 @@
-from algomock import generate_input, generate_output_string
+from algomock import InputGenerator
 
+# Example usage
+spec = [
+	{'type': 'int', 'limit': [1, 5], 'save_as': '$T'},  # Number of test cases
+	{'type': 'newline'},
+	{'type': 'loop', 'count': '$T', 'save_as': '$test_case', 'spec': [
+		{'type': 'int', 'limit': [1, 10], 'save_as': '$N'},  # N
+		{'type': 'space'},
+		{'type': 'int', 'limit': [1, '$N'], 'save_as': '$M'},  # M, upper limit depends on N
+		{'type': 'newline'},
+		{'type': 'repeat_char', 'char': '*', 'count': '$N', 'save_as': '$stars'},  # Repeat '*' N times
+		{'type': 'newline'},
+		{'type': 'repeat_type', 'count': '$M', 'spec': {  # Repeat a random digit M times
+			'type': 'int',
+			'limit': [0, 9]
+		}, 'save_as': '$digits'},
+		{'type': 'newline'},
+		{'type': 'array', 'size': '$N', 'limit': [1, 100], 'save_as': '$array'},  # Array of size N
+		{'type': 'newline'},
+		{'type': '2d_array', 'rows': '$M', 'cols': '$N', 'limit': [0, 100], 'save_as': '$matrix'},  # 2D array of size M x N
+		{'type': 'newline'},
+		{'type': 'string', 'length': '$M', 'save_as': '$str'},  # String of length M
+		{'type': 'newline'},
+		{'type': 'int', 'limit': ['$test_case', '$test_case'], 'save_as': '$index'},  # An integer between 0 and the current loop index
+		{'type': 'newline'}
+	]}
+]
 
-def main():
-	spec = [
-		{'type': 'int', 'limit': [1, 10]},  # 첫 번째 정수 (인덱스 0)
-		{'type': 'int', 'limit': [1, 10]},  # 두 번째 정수 (인덱스 1)
-		{'type': 'newline'},  # 줄 바꿈
-		{'type': 'array', 'size': '$0', 'element_type': 'int', 'limit': [1, 100]},  # 배열 크기는 첫 번째 정수를 참조
-		{'type': 'newline'},  # 줄 바꿈
-		{'type': '2d_array', 'rows': '$1', 'cols': '$0', 'element_type': 'int', 'limit': [0, 100]},  # 2D 배열 크기는 이전 정수들을 참조
-		{'type': 'newline'},  # 줄 바꿈
-		{'type': 'string', 'length': '$0'}  # 문자열 길이는 첫 번째 정수를 참조
-	]
-
-	num_test_cases = 3
-
-	all_test_cases = []
-	all_test_cases.append(str(num_test_cases))
-
-	for _ in range(num_test_cases):
-		try:
-			input_data = generate_input(spec)
-			test_case_string = generate_output_string(input_data, spec)
-			all_test_cases.append(test_case_string)
-		except Exception as e:
-			print(f"Error generating test case: {e}")
-
-	final_output = '\n'.join(all_test_cases)
-	print(final_output)
-
-
-if __name__ == "__main__":
-	main()
-
-# 필요하다면 파일로 저장할 수 있습니다
-# with open('test_cases.txt', 'w') as f:
-#     f.write(final_output)
+try:
+	generator = InputGenerator()
+	input_data = generator.generate_input(spec)
+	print(input_data)
+	print("\nGenerated Variables:")
+	for key, value in generator.variables.items():
+		print(f"{key}: {value}")
+except Exception as e:
+	print(f"Error generating test case: {e}")
